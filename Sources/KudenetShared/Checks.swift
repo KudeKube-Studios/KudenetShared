@@ -25,7 +25,6 @@ public enum ValidationStatus: Codable {
     case tooLong
     case formatInvalid
     case alreadyExists
-    case passwordEmpty
     case tooYoung
 }
 
@@ -70,8 +69,22 @@ public func RegisterationCheck(email: String,
         result.addError(field: .password, status: .tooShort)
     }
     
-    if birthday.timeIntervalSinceNow < 409968000 {
+    if abs(birthday.timeIntervalSinceNow) < 409968000 {
         result.addError(field: .birthday, status: .tooYoung)
+    }
+    
+    if handle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        result.addError(field: .handle, status: .empty)
+    }
+    if handle.trimmingCharacters(in: .whitespacesAndNewlines).count > 20 {
+        result.addError(field: .handle, status: .tooLong)
+    }
+    
+    if username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        result.addError(field: .username, status: .empty)
+    }
+    if username.trimmingCharacters(in: .whitespacesAndNewlines).count > 30 {
+        result.addError(field: .username, status: .tooLong)
     }
     
     if result.fields.isEmpty {
